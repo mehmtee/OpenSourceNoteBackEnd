@@ -1,10 +1,17 @@
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 module.exports ={
-    createToken : async(req,res,next) => {
+    createToken : e => jwt.sign({ id: "id" }, process.env.jwt_secret, {
+        expiresIn: "120h",
+      }),
+    validateToken : async(token) => {
 
-    },
-    validateToken : async(req,res,next) => {
-
+        try{
+            const result = await jwt.verify(token,process.env.jwt_secret);
+            return true;
+        }catch(err){
+            return false;
+        }
     },
     
     createHash : (string) => {

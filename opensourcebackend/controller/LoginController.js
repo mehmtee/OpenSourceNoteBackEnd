@@ -22,12 +22,20 @@ module.exports = {
             const hash = helper.createHash(req.body.password);
             delete req.body.password;
             const result = await UserModel.findOne({...req.body,hash});
-            if(result)
-            return res.json({status : 'true',user :result});
+            if(result){
+                delete result.hash;
+                const token = helper.createToken(JSON.stringify(result));
+                return res.json({status : 'true',user :result,token});
+            }
+            
             else res.json({status : 'User not found'});
         }catch(err){
             return res.json({status : 'false',message : err.message});
         }
-
+    },
+    validate : async(req, res) => {
+        const w =  await helper.validateToken(req.headers['ons-token']);
+        if(w) return res.json({status : 'true'});
+        return res.json({status : 'false'});
     }
 }
