@@ -19,7 +19,9 @@ module.exports = {
         }
 
         try{
-            const result = await UserModel.findOne({...req.body,hash :helper.createHash(req.body.password) });
+            const hash = helper.createHash(req.body.password);
+            delete req.body.password;
+            const result = await UserModel.findOne({...req.body,hash});
             if(result)
             return res.json({status : 'true',user :result});
             else res.json({status : 'User not found'});
